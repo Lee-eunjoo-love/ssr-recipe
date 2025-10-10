@@ -3,6 +3,34 @@ import express from "express";
 import { StaticRouter } from "react-router-dom";
 import App from "./App";
 import path from "path";
+import fs from "fs";
+
+// 정적 파일 html 내부에 주입
+const manifest = JSON.parse(
+  fs.readFileSync(
+    path.resolve(__dirname, "../build/asset-manifest.json"),
+    "utf-8"
+  )
+);
+
+function createPage(root) {
+  return `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>React App</title>
+        <link href="${manifest.files["main.css"]}" rel="stylesheet" />
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root">${root}</div>
+        <script src="${manifest.files["runtime-main.js"]}"></script>
+    </body>
+    </html>`;
+}
 
 const app = express();
 const serverRender = (req, res, next) => {
@@ -13,7 +41,7 @@ const serverRender = (req, res, next) => {
     </StaticRouter>
   );
   const root = ReactDOMServer.renderToString(jsx); // 렌더링된 결과물을 문자열로 변환
-  res.send(root);
+  res.send(createPage(root)); // 클라이언트에게 결과물을 응답
 };
 
 // 정적 파일 제공 (index: false 옵션을 주어 '/' 경로에서 index.html 을 제공하지 않도록 설정)
