@@ -138,7 +138,7 @@ module.exports = {
   // node_modules 에서 불러오는 것을 제외하고 번들링 하도록 설정
   externals: [
     nodeExternals({
-      allowList: [/@babel/], // @babel 로 시작하는 모듈은 번들링에 포함
+      allowlist: [/@babel/], // @babel 로 시작하는 모듈은 번들링에 포함
     }),
   ],
   // #. 환경변수 주입
