@@ -1,10 +1,31 @@
 import ReactDOMServer from "react-dom/server";
+import express from "express";
+import { StaticRouter } from "react-router-dom";
+import App from "./App";
 
-const html = ReactDOMServer.renderToString(
+const app = express();
+const serverRender = (req, res, next) => {
+  const context = {};
+  const jsx = (
+    <StaticRouter location={req.url} context={context}>
+      <App />
+    </StaticRouter>
+  );
+  const root = ReactDOMServer.renderToString(jsx); // 렌더링된 결과물을 문자열로 변환
+  res.send(root);
+};
+
+app.use(serverRender);
+
+app.listen(5000, () => {
+  console.log("Running on http://localhost:5000");
+});
+
+/*const html = ReactDOMServer.renderToString(
   <div>Hello Server Side Rendering!</div>
 );
 
-console.log(html);
+console.log(html);*/
 
 /**
  * 엔트리 : 웹팩에서 프로젝트를 불러올 때 가장 먼저 불러오는 파일
