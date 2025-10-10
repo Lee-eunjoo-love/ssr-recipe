@@ -141,6 +141,8 @@ module.exports = {
       allowList: [/@babel/], // @babel 로 시작하는 모듈은 번들링에 포함
     }),
   ],
+  // #. 환경변수 주입
+  plugins: [new webpack.DefinePlugin(env.stringified)], // 환경변수를 전역 상수로 정의
 };
 
 /**
