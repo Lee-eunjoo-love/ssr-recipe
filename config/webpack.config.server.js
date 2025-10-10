@@ -7,7 +7,11 @@ const cssRegx = /\.css$/;
 const cssModuleRegx = /\.module\.css$/; // .module.css로 끝나는 파일만 모듈로 처리
 const sassRegx = /\.(scss|sass)$/;
 const sassModuleRegx = /\.module\.(scss|sass)$/; // .module.scss, .module.sass로 끝나는 파일만 모듈로 처리
-const nodeExternals = require("webpack-node-externals");
+const nodeExternals = require("webpack-node-externals"); // yarn add webpack-node-externals
+// #. 환경변수 주입
+const webpack = require("webpack");
+const getClientEnvironment = require("./env");
+const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
 
 module.exports = {
   mode: "production",
