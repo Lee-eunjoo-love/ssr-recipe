@@ -2,6 +2,7 @@ import ReactDOMServer from "react-dom/server";
 import express from "express";
 import { StaticRouter } from "react-router-dom";
 import App from "./App";
+import path from "path";
 
 const app = express();
 const serverRender = (req, res, next) => {
@@ -14,6 +15,9 @@ const serverRender = (req, res, next) => {
   const root = ReactDOMServer.renderToString(jsx); // 렌더링된 결과물을 문자열로 변환
   res.send(root);
 };
+
+// 정적 파일 제공 (index: false 옵션을 주어 '/' 경로에서 index.html 을 제공하지 않도록 설정)
+app.use(express.static(path.resolve(__dirname, "../build"), { index: false }));
 
 app.use(serverRender);
 
