@@ -7,6 +7,7 @@ const cssRegx = /\.css$/;
 const cssModuleRegx = /\.module\.css$/; // .module.css로 끝나는 파일만 모듈로 처리
 const sassRegx = /\.(scss|sass)$/;
 const sassModuleRegx = /\.module\.(scss|sass)$/; // .module.scss, .module.sass로 끝나는 파일만 모듈로 처리
+const nodeExternals = require("webpack-node-externals");
 
 module.exports = {
   mode: "production",
@@ -130,6 +131,12 @@ module.exports = {
   resolve: {
     modules: ["node_modules"],
   },
+  // node_modules 에서 불러오는 것을 제외하고 번들링 하도록 설정
+  externals: [
+    nodeExternals({
+      allowList: [/@babel/], // @babel 로 시작하는 모듈은 번들링에 포함
+    }),
+  ],
 };
 
 /**
