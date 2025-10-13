@@ -10,19 +10,19 @@ const Menu = () => {
     { name: "Counter", path: "/counter" },
     { name: "About", path: "/about" },
   ];
-  /*const ulStyle = {
+  const ulStyle = {
     listStyle: "none",
-  };*/
-  /*const liStyle = {
+  };
+  const liStyle = {
     display: "inline-block",
     minWidth: 150,
     textDecoration: "none",
-  };*/
+  };
   return (
-    <ul className="ulStyle">
+    <ul style={ulStyle}>
       {menus &&
         menus.map((menu) => (
-          <li key={menu.name} className="liStyle">
+          <li key={menu.name} style={liStyle}>
             <Link to={menu.path}>{menu.name}</Link>
           </li>
         ))}

@@ -8,9 +8,7 @@ import { legacy_createStore as createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { thunk } from "redux-thunk";
 import rootReducer from "./modules";
-
-// 스토어 생성
-const store = createStore(rootReducer, applyMiddleware(thunk));
+import PreloadContext from "./lib/PreloadContext";
 
 // 정적 파일 html 내부에 주입
 const manifest = JSON.parse(
@@ -30,7 +28,7 @@ const chunks = Object.keys(manifest.files)
   .map((key) => `<link href="${manifest.files[key]}" rel="stylesheet" />`)
   .join("");*/
 
-function createPage(root) {
+function createPage(root, stateScript) {
   return `<!DOCTYPE html>
   <html lang="en">
     <head>
@@ -40,28 +38,47 @@ function createPage(root) {
         <meta name="theme-color" content="#000000" />
         <title>React App</title>
         <link href="${manifest.files["main.css"]}" rel="stylesheet" />
-        <script src="${manifest.files["main.js"]}"></script>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root">${root}</div>
+        ${stateScript}
         ${chunks}
+        <script src="${manifest.files["main.js"]}"></script>
     </body>
   </html>`;
 }
 
 const app = express();
-const serverRender = (req, res, next) => {
+const serverRender = async (req, res, next) => {
   const context = {};
+  // #. 스토어 생성
+  const store = createStore(rootReducer, applyMiddleware(thunk));
+  // #. 서버가 실행될 때 요청이 들어올때마다 새로운 스토어를 만들기 위해 프로미스를 수집하고 기다렸다가 다시 렌더링
+  const preloadContext = {
+    done: false,
+    promises: [],
+  };
   const jsx = (
-    <Provider store={store}>
-      <StaticRouter location={req.url} context={context}>
-        <App />
-      </StaticRouter>
-    </Provider>
+    <PreloadContext.Provider value={preloadContext}>
+      <Provider store={store}>
+        <StaticRouter location={req.url} context={context}>
+          <App />
+        </StaticRouter>
+      </Provider>
+    </PreloadContext.Provider>
   );
+  ReactDOMServer.renderToStaticMarkup(jsx); // #. renderToStaticMarkup 으로 한번 렌더링
+  try {
+    await Promise.all(preloadContext.promises);
+  } catch (e) {
+    return res.status(500);
+  }
+  preloadContext.done = true;
   const root = ReactDOMServer.renderToString(jsx); // 렌더링된 결과물을 문자열로 변환
-  res.send(createPage(root)); // 클라이언트에게 결과물을 응답
+  const stateString = JSON.stringify(store.getState()).replace(/</g, "\\u003c");
+  const stateScript = `<script>__PRELOADED_STATE__ = ${stateString}</script>`; // #. 리덕스 초기 상태 스크립트로 주입
+  res.send(createPage(root, stateScript)); // 클라이언트에게 결과물을 응답
 };
 
 // 정적 파일 제공 (index: false 옵션을 주어 '/' 경로에서 index.html 을 제공하지 않도록 설정)

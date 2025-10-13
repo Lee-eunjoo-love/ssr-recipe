@@ -1,34 +1,24 @@
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Users from "../components/Users";
-import { getUsers, getUser } from "../modules/users";
+import { getUsers } from "../modules/users";
 import { useEffect } from "react";
+import { Preloader } from "../lib/PreloadContext";
 
-const UsersContainer = ({ users, user, error, loading, getUsers, getUser }) => {
+const UsersContainer = () => {
+  const users = useSelector((state) => state.users.users);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    const fn = async () => {
-      try {
-        await getUser(1);
-        await getUsers();
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fn();
-  }, [getUsers, getUser]);
+    if (users) return; // #. users 가 이미 유효하다면 요청하지 않음
+    dispatch(getUsers());
+  }, [dispatch, users]);
 
-  return <Users users={users} user={user} error={error} loading={loading} />;
+  return (
+    <>
+      <Users users={users} />
+      <Preloader resolve={() => dispatch(getUsers)} />
+    </>
+  );
 };
 
-export default connect(
-  ({ users, loading }) => ({
-    user: users.user,
-    users: users.users,
-    loadingPost: loading["users/GET_USER"],
-    loadingUsers: loading["users/GET_USERS"],
-    error: users.error,
-  }),
-  {
-    getUsers,
-    getUser,
-  }
-)(UsersContainer);
+export default UsersContainer;

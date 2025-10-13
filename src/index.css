@@ -11,30 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
-.menu ul {
-  list-style: none;
-  background: orange;
-}
-.menu li {
-  float: left;
-  margin: 1px;
-}
-.menu li a {
-  display: block;
-  width: 150px;
-  height: 40px;
-  color: #fff;
-  border: 1px solid blue;
-  font-size: 12px;
-  font-family: "돋움";
-  text-align: center;
-  padding-top: 10px;
-  text-decoration: none;
-}
-.menu li a span {
-  display: block;
-}
-.menu li a:hover {
-  text-decoration: none;
-}

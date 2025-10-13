@@ -1,14 +1,12 @@
 import { Link } from "react-router-dom";
 
-const Users = (users, user, loading) => {
-  if (!users || !users.users) return <div>No data</div>;
+const Users = (users) => {
+  if (!users || !users.users) return;
 
   return (
     <div>
-      {JSON.stringify(loading)}
       <section>
-        {loading && "로딩중..."}
-        {!loading && users && users.users && users.users.length > 0 && (
+        {users && users.users && (
           <ul>
             {users.users.map((user) => (
               <li key={user.id}>
@@ -19,11 +17,6 @@ const Users = (users, user, loading) => {
             ))}
           </ul>
         )}
-      </section>
-      <section>
-        <h2>사용자</h2>
-        {loading && "로딩중..."}
-        {!loading && user && <div>{JSON.stringify(user)}</div>}
       </section>
     </div>
   );
