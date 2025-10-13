@@ -70,8 +70,8 @@ module.exports = {
   appTsBuildInfoFile: resolveApp("node_modules/.cache/tsconfig.tsbuildinfo"),
   swSrc: resolveModule(resolveApp, "src/service-worker"),
   publicUrlOrPath,
-  ssrIndexJs: resolveApp("src/index.server.js"), // [서버 전용 환경 설정] 서버 사이드 렌더링 엔트리 파일
-  ssrBuild: resolveApp("dist"), // [서버 전용 환경 설정] 서버 사이드 렌더링 빌드 결과물
+  ssrIndexJs: resolveApp("src/index.server.js"), // #. [서버 전용 웹팩 환경 설정] 서버 사이드 렌더링 엔트리 파일
+  ssrBuild: resolveApp("dist"), // #. [서버 전용 웹팩 환경 설정] 서버 사이드 렌더링 빌드 결과물. 웹팩 처리 후 저장 경로
 };
 
 module.exports.moduleFileExtensions = moduleFileExtensions;
