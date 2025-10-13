@@ -12,7 +12,7 @@ import rootReducer from "./modules";
 // 스토어 생성
 const store = createStore(
   rootReducer,
-  window.__PRELOAD_STATE__, // #. 이 값을 초기 상태로 사용함.
+  window.__PRELOAD_STATE__, // #. 이 값을 초기 상태로 사용함. (브로우저에서 상태 재사용시)
   applyMiddleware(thunk)
 );
 
@@ -29,3 +29,7 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+/**
+ * window.__PRELOAD_STATE__ : 브로우저에서 상태를 재사용할 때 스토어 생성 과정에서 이 값을 초기값으로 사용하면 됨
+ */

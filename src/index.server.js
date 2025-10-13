@@ -68,14 +68,14 @@ const serverRender = async (req, res, next) => {
       </Provider>
     </PreloadContext.Provider>
   );
-  ReactDOMServer.renderToStaticMarkup(jsx); // #. renderToStaticMarkup 으로 한번 렌더링
+  ReactDOMServer.renderToStaticMarkup(jsx); // #. renderToStaticMarkup 으로 한번 렌더링. (Preloader로 넣어 준 함수를 호출하기 위한 목적. 처리 속도가 renderToString 보다 빨라 대신 사용)
   try {
     await Promise.all(preloadContext.promises);
   } catch (e) {
     return res.status(500);
   }
   preloadContext.done = true;
-  const root = ReactDOMServer.renderToString(jsx); // 렌더링된 결과물을 문자열로 변환
+  const root = ReactDOMServer.renderToString(jsx); // 렌더링된 결과물을 문자열로 변환.
   const stateString = JSON.stringify(store.getState()).replace(/</g, "\\u003c");
   const stateScript = `<script>__PRELOADED_STATE__ = ${stateString}</script>`; // #. 리덕스 초기 상태 스크립트로 주입
   res.send(createPage(root, stateScript)); // 클라이언트에게 결과물을 응답
@@ -112,4 +112,10 @@ console.log(html);*/
  *    - 서버 사이드 렌더링 : renderToString() 함수 내부에서 데이터 로딩 후 렌더링
  *
  * Ducks 패턴 : 액션 타입, 액션 생성 함수, 리듀서를 하나의 파일에 작성하는 방식
+ *
+ * renderToStaticMarkup : 리액트를 사용하여 정적인 페이지를 만들 때 사용. 이 함수로 만든 렌더링 결과물은 클라이언트 쪽에서 HTML DOM 인터렉션 지원 어려움.
+ *
+ * #. 현재 스토어 상태를 문자열로 변환한 뒤 스크립트로 주입
+ * const stateString = JSON.stringify(store.getState()).replace(/</g, "\\u003c"); // #. 현재 스토어 상태
+ * const stateScript = `<script>__PRELOADED_STATE__ = ${stateString}</script>`; // #. 리덕스 초기 상태 스크립트로 주입
  */
