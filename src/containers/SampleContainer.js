@@ -2,6 +2,7 @@ import { connect } from "react-redux";
 import Sample from "../components/Sample";
 import { getPost, getUsers } from "../modules/sample";
 import { useEffect } from "react";
+import { Preloader } from "../lib/PreloadContext";
 
 const SampleContainer = ({
   post,
@@ -23,7 +24,13 @@ const SampleContainer = ({
     fn();
   }, [getPost, getUsers]);
 
-  return <Sample post={post} users={users} error={error} loading={loading} />;
+  return (
+    <>
+      <Sample post={post} users={users} error={error} loading={loading} />
+      <Preloader resolve={() => getPost} />
+      <Preloader resolve={() => getUsers} />
+    </>
+  );
 };
 
 export default connect(
