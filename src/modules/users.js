@@ -11,7 +11,7 @@ const GET_USER_SUCCESS = "users/GET_USER_SUCCESS";
 const GET_USER_FAILURE = "users/GET_USER_FAILURE";
 
 // #. 액션 생성 함수
-const getUsersPending = () => ({ type: GET_USERS_FIALURE });
+const getUsersPending = () => ({ type: GET_USERS_PENDING });
 const getUsersSuccess = (payload) => ({ type: GET_USERS_SUCCESS, payload });
 const getUsersFailure = (payload) => ({
   type: GET_USERS_FIALURE,

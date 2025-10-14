@@ -3,7 +3,6 @@ const User = ({ user }) => {
 
   return (
     <div>
-      {JSON.stringify(user)}
       <h1>
         {username} ({name})
       </h1>

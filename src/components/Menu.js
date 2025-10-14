@@ -6,7 +6,6 @@ const Menu = () => {
     { name: "Red", path: "/red" },
     { name: "Blue", path: "/blue" },
     { name: "Users", path: "/users" },
-    { name: "Sample", path: "/sample" },
     { name: "Counter", path: "/counter" },
     { name: "About", path: "/about" },
   ];
