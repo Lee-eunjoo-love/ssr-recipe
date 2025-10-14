@@ -7,14 +7,19 @@ import { BrowserRouter } from "react-router-dom";
 import { legacy_createStore as createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { thunk } from "redux-thunk";
-import rootReducer from "./modules";
+import rootReducer, { rootSaga } from "./modules";
+import createSagaMiddleware from "redux-saga";
+
+const sagaMiddleware = createSagaMiddleware();
 
 // 스토어 생성
 const store = createStore(
   rootReducer,
   window.__PRELOAD_STATE__, // #. 이 값을 초기 상태로 사용함. (브로우저에서 상태 재사용시)
-  applyMiddleware(thunk)
+  applyMiddleware(thunk, sagaMiddleware)
 );
+
+sagaMiddleware.run(rootSaga);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

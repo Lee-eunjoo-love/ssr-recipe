@@ -7,8 +7,9 @@ import fs from "fs";
 import { legacy_createStore as createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { thunk } from "redux-thunk";
-import rootReducer from "./modules";
+import rootReducer, { rootSaga } from "./modules";
 import PreloadContext from "./lib/PreloadContext";
+import createSagaMiddleware, { END } from "redux-saga";
 
 // 정적 파일 html 내부에 주입
 const manifest = JSON.parse(
@@ -52,8 +53,15 @@ function createPage(root, stateScript) {
 const app = express();
 const serverRender = async (req, res, next) => {
   const context = {};
+  // #. [redux-saga 서버 사이드 렌더링 설정] redux-saga 사용시 Promise 를 반환하지 않으므로 추가 작업 필요
+  const sagaMiddleware = createSagaMiddleware();
   // #. 스토어 생성
-  const store = createStore(rootReducer, applyMiddleware(thunk));
+  const store = createStore(
+    rootReducer,
+    applyMiddleware(thunk, sagaMiddleware)
+  ); // #. [redux-saga 서버 사이드 렌더링 설정]
+  sagaMiddleware.run(rootSaga); // #. [redux-saga 서버 사이드 렌더링 설정]
+  const sagaPromise = sagaMiddleware.run(rootSaga).toPromise(); // #. [redux-saga 서버 사이드 렌더링 설정] Promise 로 변환.
   // #. 서버가 실행될 때 요청이 들어올때마다 새로운 스토어를 만들기 위해 프로미스를 수집하고 기다렸다가 다시 렌더링
   const preloadContext = {
     done: false,
@@ -69,8 +77,10 @@ const serverRender = async (req, res, next) => {
     </PreloadContext.Provider>
   );
   ReactDOMServer.renderToStaticMarkup(jsx); // #. renderToStaticMarkup 으로 한번 렌더링. (Preloader로 넣어 준 함수를 호출하기 위한 목적. 처리 속도가 renderToString 보다 빨라 대신 사용)
+  store.dispatch(END); // #. [redux-saga 서버 사이드 렌더링 설정] redux-saga 의 END 액션을 발생시키면 액션을 모니터링하는 사가들이 모두 종료됨
   try {
-    await Promise.all(preloadContext.promises);
+    await sagaPromise; // #. [redux-saga 서버 사이드 렌더링 설정] 기존에 진행 중이던 사가들이 모두 끝날때까지 대기
+    await Promise.all(preloadContext.promises); // 모든 프로미스 대기
   } catch (e) {
     return res.status(500);
   }
