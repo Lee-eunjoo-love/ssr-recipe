@@ -1,0 +1,1 @@
+"use strict";exports.id=143,exports.ids=[143],exports.modules={483:(s,e,d)=>{d.r(e),d.d(e,{default:()=>l});var r=d(732);const t=()=>(0,r.jsx)("div",{className:"blue",children:"Blue"}),l=()=>(0,r.jsx)(t,{})}};

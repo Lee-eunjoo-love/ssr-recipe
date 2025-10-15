@@ -1,0 +1,1 @@
+"use strict";exports.id=666,exports.ids=[666],exports.modules={585:(e,s,t)=>{t.r(s),t.d(s,{default:()=>i});var r=t(732);const d=()=>(0,r.jsx)("div",{style:{textAlign:"center",marginTop:"5rem"},children:(0,r.jsx)("h2",{children:"Not found page."})}),i=()=>(0,r.jsx)(d,{})}};
