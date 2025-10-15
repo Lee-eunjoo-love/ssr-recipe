@@ -127,8 +127,6 @@ const serverRender = async (req, res, next) => {
     styles: extractor.getStyleTags(),
   };
 
-  console.log("====> tag: ", JSON.stringify(tags));
-
   res.send(createPage(root, tags)); // 클라이언트에게 결과물을 응답
 };
 
